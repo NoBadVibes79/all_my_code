@@ -1,0 +1,496 @@
+
+header {
+  background-color:  #3399FF;
+  color: #fff;
+  padding: 20px;
+}
+
+h3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #00FFFF;
+  font-size: 60px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+
+h1 {
+  margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin-right: 20px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #ffeb3b;
+}
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  margin-top: 20px;
+  margin-bottom: 13px;
+  color: #3f51b5;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gallery img {
+  width: calc(33.33% - 10px);
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+form label, form input, form textarea {
+  display: block;
+  margin-bottom: 10px;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+form input[type="submit"] {
+  background-color: #9933CC;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+  background-color: #ffc107;
+}
+
+footer {
+  background-color: #33CCCC;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+footer p {
+  margin: 0;
+}
+
+.indent {
+  text-indent: 20px;
+  line-height: 1.5;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #DAA520;
+  font-size: 20px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+
+#newtrick {
+	display: block;
+	margin: 0 auto;
+	width: 250px;
+    background-color: #0ac2c2f0; /* Green */
+    border: 1px solid #043636f0; /* Green */
+    color: white;
+    padding: 12px 50px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 10px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+	cursor: pointer;
+}
+
+#newtrick span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+#newtrick span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+#newtrick:hover span {
+  padding-right: 15px;
+}
+
+#newtrick:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+#newtrick:hover {
+    background-color: #189e4dc4; /* Green */
+    color: white;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+/* Block Parsera */
+.accordion-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.accordion-content {
+  display: none;
+}
+
+.accordion-content.active {
+  display: block;
+}
+
+.accordion-symbol {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.1em;
+  fill: #00FFFF;
+  transition: all 0.3s ease-in-out;
+  vertical-align: middle;
+}
+
+.accordion-header:hover .accordion-symbol {
+  fill: #ff8c00;
+}
+
+h4 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #00FFFF;
+  font-size: 60px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  transition: color 0.3s ease-in-out;
+}
+
+h4:hover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #ff8c00;
+  font-size: 60px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+/* End of block Parsera */
+
+/* Заголовок по середине */
+h5 {
+  margin-top: 20px;
+  margin-bottom: 13px;
+  color: #8e15ebee;
+  text-align: center;
+  font-size: 30px;
+}
+/* Текст по середени  */
+.center-text {
+  display: flex;
+  justify-content: center;
+  font-size: 20px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+ /* Style for right element */
+#right {
+	float: right;
+	width: 3%;
+	font-family: Georgia, serif; /* Change font */
+	font-size: 22px; /* Change text size */
+	color: #EE82EE; /* Change text color */
+ }
+
+/* Тесты с кнопками следующей стираницы*/
+.npage3 {
+  background-color: #4CAF50; /* задаем цвет фона */
+  border: none; /* убираем рамку кнопки */
+  color: white; /* задаем цвет текста */
+  padding: 15px 32px; /* задаем внутренний отступ */
+  text-align: center; /* выравниваем текст по центру */
+  text-decoration: none; /* убираем подчеркивание */
+  display: inline-block; /* задаем блочный тип элемента */
+  font-size: 16px; /* задаем размер шрифта */
+  margin: 4px 2px; /* задаем внешний отступ */
+  cursor: pointer; /* меняем курсор при наведении на кнопку */
+}
+
+/* Для кнопки в home */
+.phome {
+  background-color: #a8a8a8d6; /* задаем цвет фона */
+  border: 1px solid #043636f0; /* убираем рамку кнопки */
+  border-radius: 20px;
+  color: white; /* задаем цвет текста */
+  padding: 12px 200px; /* задаем внутренний отступ */
+  text-align: center; /* выравниваем текст по центру */
+  text-decoration: none; /* убираем подчеркивание */
+  display: flex; /* задаем блочный тип элемента */
+  font-size: 18px; /* задаем размер шрифта */
+  margin: 4px 2px; /* задаем внешний отступ */
+  cursor: pointer; /* меняем курсор при наведении на кнопку */
+  -webkit-transition-duration: 0.4s; 
+  transition-duration: 0.4s;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.phome:hover {
+    background-color: #8a759ed6; /* Green */
+    color: white;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    translate: 1rem;
+}
+
+/*#newtrick {
+	display: block;
+	margin: 0 auto;
+	width: 250px;
+    background-color: #0ac2c2f0; /* Green 
+    border: 1px solid #043636f0; /* Green 
+    color: white;
+    padding: 12px 50px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 10px;
+    -webkit-transition-duration: 0.4s; /* Safari 
+    transition-duration: 0.4s;
+	cursor: pointer;
+}*/
+
+/*#right {
+	float: right;
+	width: 3%;
+	font-family: Georgia, serif;  Change font 
+	font-size: 22px; 
+	color: #EE82EE; @keyframes
+ }*/
+ 
+ /* Before button #newtrick:before {
+    content: 'i';
+    margin-right: 5px;
+} */
+
+
+/* блок ддля анимации номера страницы */
+.page-number {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 30px;
+  background-color: #00FFFF;
+  color: #fff;
+  font-size: 1.5rem;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    background-color: #00FFFF;
+  }
+  50% {
+    transform: scale(1.2);
+    background-color: #9b4dca;
+  }
+  100% {
+    transform: scale(1);
+    background-color: #00FFFF;
+  }
+}
+
+/* Блок для таймера */
+/*! for timer
+body {
+  background-color:  #000000;
+}
+*/
+
+.arttime {
+  display: grid;
+  height: 150px;
+  place-items: center;
+  background-color: #000000;
+  max-width: 800px;
+  /*margin: ;  Центрирует элемент по горизонтали */
+  margin: 20px auto; /* задаем внешний отступ */
+  cursor: pointer;
+}
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.wrapper{
+  height: 100px;
+  width: 360px;
+  cursor: default;
+  background: linear-gradient(135deg, aqua, rgb(0, 255, 0), rgb(255, 255, 0), orange, red, rgb(255, 0, 234));
+  border-radius: 10px;
+  animation: animate 1.5s linear infinite;
+}
+
+.wrapper .display,
+.wrapper span{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.wrapper .display{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  background: #1b1b1b;
+  border-radius: 6px;
+  height: 85px;
+  width: 345px;
+  text-align: center;
+}
+
+
+.wrapper .display #time{
+  font-size: 50px;
+  line-height: 85px;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, aqua, rgb(0, 255, 0), rgb(255, 255, 0), orange, red, rgb(255, 0, 234));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: animate 1.5s linear infinite;
+}
+
+@keyframes animate {
+  100%{
+      filter: hue-rotate(360deg);
+  }
+}
+
+.wrapper span{
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: 10px;
+}
+
+.wrapper span:first-child{
+  filter: blur(10px);
+}
+
+.wrapper span:last-child{
+  filter: blur(20px);
+}
+
+
+/*? Трик с наушниками */
+
+.headset img{
+  width: 500px;
+  transform: translateX(0px);
+  animation: float 6s ease-out infinite;
+  cursor: pointer;
+}
+
+@keyframes float {
+  0%{
+    transform: translateY(0px);
+  }
+  50%{
+    transform: translateY(-60px);
+  }
+  100%{
+    transform: translateY(0px);
+  }
+}
+
+.headset {
+  background: linear-gradient(135deg, aqua, rgb(44, 217, 223), rgb(48, 179, 219), rgb(48, 156, 206), rgb(225, 0, 255), rgb(204, 0, 255));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.priceh { 
+  font-weight: bold;
+  transform: translateX(0px);
+  animation: float 6s ease-out infinite;
+  cursor: pointer;
+  background-color: rgba(226, 35, 226, 0.842); /* задаем цвет фона */
+  border: 1px solid #043636f0; /* убираем рамку кнопки */
+  border-radius: 16px;
+  color: white; /* задаем цвет текста */
+  padding: 12px 12px; /* задаем внутренний отступ */
+  text-decoration: none; /* убираем подчеркивание */
+  font-size: 18px; /* задаем размер шрифта */
+  margin: 4px 100px; /* задаем внешний отступ */
+  font-family: 'Lato', sans-serif;
+}
+
+
+
+
+/* Glass effect */
+.glassef {
+  background-color: #ffffff05;
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(25px);
+  border: none; /* убираем рамку кнопки */
+  color: rgb(0, 0, 0); /* задаем цвет текста */
+  padding: 15px 32px; /* задаем внутренний отступ */
+  text-align: center; /* выравниваем текст по центру */
+  text-decoration: none; /* убираем подчеркивание */
+  display: inline-block; /* задаем блочный тип элемента */
+  font-size: 16px; /* задаем размер шрифта */
+  margin: 4px 2px; /* задаем внешний отступ */
+  cursor: pointer; /* меняем курсор при наведении на кнопку */
+}
