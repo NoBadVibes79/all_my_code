@@ -1,4 +1,4 @@
-''' pip install selenium, translate, bs4, pandas, requests, 
+''' pip install selenium, translate, bs4, pandas, requests 
 '''
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -22,7 +22,7 @@ options = webdriver.ChromeOptions()
 options.add_argument(
     f"user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
 
-service = Service(r'E:\OSPanel\domains\selenium\chromedriver\chromedriver.exe')
+service = Service('chromedriver.exe')
 options.binary_location = r"D:\Program Files\Google\Chrome\Application\chrome.exe"
 
 translator_th = Translator(from_lang="th", to_lang="en")
@@ -36,8 +36,8 @@ def get_source_html(url):
         time.sleep(5)
 
         while True:
-            if driver.find_elements(By.XPATH, '/html/body/main/div/div/div[4]/div[1]/div/div[3]/a'):
-                element = driver.find_element(By.XPATH, '/html/body/main/div/div/div[4]/div[1]/div/div[3]/a')
+            if driver.find_elements(By.CLASS_NAME, 'plp-btn--secondary'):
+                element = driver.find_element(By.CLASS_NAME, 'plp-btn--secondary')
                 # спасение от проблем с нажатием
                 driver.execute_script("arguments[0].click();", element)
                 time.sleep(3)
