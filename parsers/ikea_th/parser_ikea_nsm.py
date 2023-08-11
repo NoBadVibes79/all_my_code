@@ -29,7 +29,7 @@ translator_th = Translator(from_lang="th", to_lang="en")
 
 
 def get_source_html(url):
-
+    cnt = 0
     try:
         driver = webdriver.Chrome(service=service, options=options)
         driver.get(url)
@@ -41,6 +41,11 @@ def get_source_html(url):
                 # спасение от проблем с нажатием
                 driver.execute_script("arguments[0].click();", element)
                 time.sleep(3)
+                
+                if cnt % 10 == 0:
+                    time.sleep(random.randrange(3, 7))
+                    
+                cnt += 1
             else:
                 with open('index.html', 'w', encoding='utf-8') as f:
                     f.write(driver.page_source)
