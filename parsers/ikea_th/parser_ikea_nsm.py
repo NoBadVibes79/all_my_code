@@ -1,4 +1,4 @@
-''' pip install selenium, translate, bs4, pandas, requests 
+''' pip install selenium, translate, bs4, pandas, requests, 
 '''
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -10,84 +10,88 @@ import requests
 import random
 import time
 
-
-
-url = 'https://www.ikea.com/th/th/cat/double-beds-16284/'
-
 headers = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 }
+
+service = Service(r'E:\OSPanel\domains\selenium\chromedriver\chromedriver.exe')
 options = webdriver.ChromeOptions()
 options.add_argument(
     f"user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-
-service = Service('chromedriver.exe')
 options.binary_location = r"D:\Program Files\Google\Chrome\Application\chrome.exe"
 
 translator_th = Translator(from_lang="th", to_lang="en")
 
 
-def get_source_html(url):
-    cnt = 0
+def get_source_html():
+
     try:
+        url = ''
         driver = webdriver.Chrome(service=service, options=options)
-        driver.get(url)
-        time.sleep(5)
+        file0 = open('items_urls.txt', 'w')
+        file0.close()
+        
+        with open('urls_category.txt', 'r') as file1:
+            for line in file1:
+                cnt = 1
+                url = line.strip()
 
-        while True:
-            if driver.find_elements(By.CLASS_NAME, 'plp-btn--secondary'):
-                element = driver.find_element(By.CLASS_NAME, 'plp-btn--secondary')
-                # спасение от проблем с нажатием
-                driver.execute_script("arguments[0].click();", element)
-                time.sleep(3)
+                driver.get(url)
+                time.sleep(5)
+
+                while True:
+                    if driver.find_elements(By.CLASS_NAME, 'catalog-product-list__total-count'):
+                        element = driver.find_elements(
+                            By.CLASS_NAME, 'plp-btn--secondary')
+                        # спасение от проблем с нажатием
+                        driver.execute_script("arguments[0].click();", element[-1])
+                        time.sleep(3)
+                        
+                        if cnt % 10 == 0:
+                            time.sleep(random.randrange(2, 5))
+                    else:
+                        with open('index.html', 'w', encoding='utf-8') as f1:
+                            f1.write(driver.page_source)
+                            f1.close
+                        break
                 
-                if cnt % 10 == 0:
-                    time.sleep(random.randrange(3, 7))
-                    
-                cnt += 1
-            else:
-                with open('index.html', 'w', encoding='utf-8') as f:
-                    f.write(driver.page_source)
-                break
+                f1.close
+                
+                with open('index.html', 'r', encoding='utf-8') as f2:
+                    src = f2.read()
 
+                soup = bs(src, 'lxml')
+
+                items_cards = soup.find_all('div', class_='plp-fragment-wrapper')
+
+                urls = []
+                for item_url in items_cards:
+                    item_url = item_url.find('a').get('href')
+                    urls.append(item_url)
+
+                with open('items_urls.txt', 'a', encoding='utf-8') as f3:
+                    for url in urls:
+                        f3.write(f'{url}\n')
+            
+                f3.close
+                f2.close
+            file1.close
+            
+            
     except Exception as ex:
         print(ex)
     finally:
         driver.close()
         driver.quit()
 
-    return '[INFO] Sourse html collected successfully!'
+    return '[INFO] Sourse html and urls collected successfully!'
 
 
-def get_item_urls():
-
-    with open('index.html', 'r', encoding='utf-8') as f:
-        src = f.read()
-
-    soup = bs(src, 'lxml')
-
-    items_cards = soup.find_all('div', class_='plp-fragment-wrapper')
-
-    urls = []
-    for item_url in items_cards:
-        item_url = item_url.find('a').get('href')
-        urls.append(item_url)
-
-    with open('items_urls.txt', 'w', encoding='utf-8') as f:
-        for url in urls:
-            f.write(f'{url}\n')
-
-    return '[INFO] Urls collected successfully!'
-
-
-def get_data():
-    with open('items_urls.txt', 'r', encoding='utf-8') as f:
-        urls_list = [url.strip() for url in f.readlines()]
-
-    result_list = []
-
-    result_list.append(
+def create_excel():
+    template_lst = []
+    
+    template_lst.append(
         {
             'Group No': 'Optional',
             'Category': 'Mandatory',
@@ -118,7 +122,7 @@ def get_data():
             'Package Height (cm)': 'Mandatory',
         }
     )
-    result_list.append(
+    template_lst.append(
         {
             'Group No': 'Group number enables the grouping of multiple variations as one product. Group numbers are processed in neighbouring row sequence. Please be informed that blanks are considered a value for group number.',
             'Category': 'Indicate the appropriate category ID for each product. An accurate category ID would boost search results.',
@@ -149,8 +153,8 @@ def get_data():
             'Package Height (cm)': 'Please ensure you have entered the right package weight (kg) and dimensions (cm) to avoid incorrect shipping fee charges',
         }
     )
-    
-    result_list.append(
+
+    template_lst.append(
         {
             'Group No': 'You are advised to put a group number for different products, and only input same in subsequent order for products you want to group/are variations.',
             'Category': '*please choose from the drop-down box, or input the correct category id.',
@@ -181,11 +185,26 @@ def get_data():
             'Package Height (cm)': '*tr(weight@excel.req2)',
         }
     )
+    
+    df = pd.DataFrame(template_lst)
+    df.to_excel('result.xlsx', index=False)
+    
+    return '[INFO] Xlsx template created!'
+
+
+def get_data():
+    with open('items_urls.txt', 'r', encoding='utf-8') as f:
+        urls_list = [url.strip() for url in f.readlines()]
+
+    result_list = []
+
+    
 
     urls_cnt = len(urls_list)
     cnt = 1
     for url in urls_list:
-        response = requests.get(url=url, headers=headers)
+        response = requests.get(
+            url=url, headers=headers)
         soup = bs(response.text, 'lxml')
 
         name_eng = ''
@@ -223,7 +242,7 @@ def get_data():
         category_lst = []
         try:
             item_category = soup.find_all(
-                'li', class_='bc-breadcrumb__list-item')  # .text.strip()
+                'li', class_='bc-breadcrumb__list-item')
             for category in item_category:
                 category = category.text.strip()
                 category_lst.append(category)
@@ -276,25 +295,58 @@ def get_data():
 
         size_lst = []
         no_size_lst = []
-        try:
-            item_nosizes = soup.find('div', class_='pip-product-dimensions__measurement-container').find_all(
-                'p', class_='pip-product-dimensions__measurement-wrapper')
-            for nosize in item_nosizes:
-                nosizes = nosize.text.strip()
-                nosize = nosizes.replace('\xa0', '')
-                no_size_lst.append(nosize)
+        size_dict = {}
 
-            for c in no_size_lst:
+        try:
+            updiv_size = soup.find('div', class_='pip-product-dimensions__dimensions-container').find_all(
+                'p', class_='pip-product-dimensions__measurement-wrapper')
+            
+            for size in updiv_size:
+                size_name = size.find(
+                    'span').text.strip().replace(':', '')
+
+                size_int = size.text.strip()
                 clear_size = ''
-                for s in c[:-1]:
+                for s in size_int[:-1]:
                     if s in '0123456789.':
                         clear_size += s
-                size_lst.append(clear_size)
+                
+                size_dict[f'{size_name}'] = f'{clear_size}'
+            
 
-            weight = size_lst[-1]
-            length = size_lst[2]
-            width = size_lst[0]
-            height = size_lst[1]
+            down_div = soup.find('div', class_='pip-product-dimensions__measurement-container').find_all(
+                'p', class_='pip-product-dimensions__measurement-wrapper')
+
+            for size in down_div:
+                size_name = size.find(
+                    'span').text.strip().replace(':', '')
+
+                size_int = size.text.strip()
+                clear_size = ''
+                for s in size_int[:-1]:
+                    if s in '0123456789.':
+                        clear_size += s
+
+                size_dict[f'{size_name}'] = f'{clear_size}'
+
+
+            weight, length, width, height = '', '', '', ''
+            
+            for key in size_dict:
+                if key == 'น้ำหนัก':
+                    weight = size_dict[key]
+                elif key == 'ยาว':
+                    length = size_dict[key]
+                elif key == 'กว้าง':
+                    width = size_dict[key]
+                elif key == 'ความสูง':
+                    height = size_dict[key]
+                elif width == '' and key == 'เส้นผ่านศูนย์กลาง':
+                    width = size_dict[key]
+                elif length == '' and key == 'เส้นผ่านศูนย์กลางภายนอก':
+                    length = size_dict[key]
+
+
         except Exception as _ex:
             item_nosizes = None
 
@@ -314,7 +366,6 @@ def get_data():
             item_imgs = None
 
         long_desc = item_description + f'\n{item_material}\n{item_instruction}'
-
 
         result_list.append(
             {
@@ -348,7 +399,6 @@ def get_data():
             }
         )
 
-
         time.sleep(random.randrange(2, 5))
 
         if cnt % 10 == 0:
@@ -358,17 +408,20 @@ def get_data():
 
         cnt += 1
 
+
     #! запись в xls
 
-    df = pd.DataFrame(result_list)
-    df.to_excel('result.xlsx', index=False)
+    existing_data = pd.read_excel('result.xlsx')
+    new_data = pd.DataFrame(result_list)
+    combined_data = pd.concat([existing_data, new_data], ignore_index=True)
+    combined_data.to_excel('result.xlsx', index=False)
 
     return '[INFO] Data collected successfully!'
 
 
 def main():
-    print(get_source_html(url=url))
-    print(get_item_urls())
+    print(get_source_html())
+    print(create_excel())
     print(get_data())
 
 
