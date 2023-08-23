@@ -1,9 +1,8 @@
-''' pip install selenium, translate, bs4, pandas, requests, 
+''' pip install selenium, bs4, pandas, requests, 
 '''
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from translate import Translator
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 import requests
@@ -21,7 +20,6 @@ options.add_argument(
     f"user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
 options.binary_location = r"D:\Program Files\Google\Chrome\Application\chrome.exe"
 
-translator_th = Translator(from_lang="th", to_lang="en")
 
 
 def get_source_html():
@@ -107,6 +105,7 @@ def create_excel():
             'Product Images8': 'Optional',
             'Brand': 'Mandatory',
             'Long Description': 'Optional',
+            'English Long Description (optional)': 'Optional',
             'Dangerous Goods': 'Optional',
             'Variation Name1': 'Optional',
             'Option for Variation1': 'Optional',
@@ -139,6 +138,7 @@ def create_excel():
             'Brand': 'The brand of your product',
             'Long Description': 'A good product description enhances the quality of your listing and increases chances of sales.',
             'Dangerous Goods': 'Please fill in accurately. Inaccurate DG may result in additional shipping fee or failed delivery. DG contains battery/magnet/liquid/flammable materials. If not fill, default value is None DG.',
+            'English Long Description (optional)': '',
             'Variation Name1': 'Add variants to a product that has more than one option. You can select from the provided variant types or create your own. <a href="https://university.lazada.co.th/course/learn?spm=a1zawg.20777315.0.0.37894edfHY3Wmc&id=1000&type=article" target="_blank">Learn More</a>',
             'Option for Variation1': 'Add variants to a product that has more than one option. You can select from the provided variant types or create your own. <a href="https://university.lazada.co.th/course/learn?spm=a1zawg.20777315.0.0.37894edfHY3Wmc&id=1000&type=article" target="_blank">Learn More</a>',
             'Image per Variation': 'Add variants to a product that has more than one option. You can select from the provided variant types or create your own. <a href="https://university.lazada.co.th/course/learn?spm=a1zawg.20777315.0.0.37894edfHY3Wmc&id=1000&type=article" target="_blank">Learn More</a>',
@@ -170,6 +170,7 @@ def create_excel():
             'Product Images8': '*This is the main image of your product page. Maximum 8 images with size between 330x330 and 5000x5000 px. Max file size: 3 MB. Obscene image is strictly prohibited. Excess images can only be deleted using Overwrite feature during Bulk Edit.',
             'Brand': '*Choose from the ASC, or input directly',
             'Long Description': 'Please input 20 to 3000 characters for product description. Value can only be deleted using Overwrite feature during Bulk Edit. Description with Lorikeet can be edited or deleted on Web. ',
+            'English Long Description (optional)': '',
             'Dangerous Goods': 'Select from dropdown list to update. Delete the value using Overwrite feature during Bulk Edit will be given a default value "Yes" if applicable.',
             'Variation Name1': '',
             'Option for Variation1': '',
@@ -197,33 +198,27 @@ def get_data():
         urls_list = [url.strip() for url in f.readlines()]
 
     result_list = []
-
-    
-
     urls_cnt = len(urls_list)
     cnt = 1
-    for url in urls_list:
+    
+    for url in urls_list[:20]:
+        
         response = requests.get(
             url=url, headers=headers)
         soup = bs(response.text, 'lxml')
 
-        name_eng = ''
+
         try:
             item_name1 = soup.find(
                 'span', class_='pip-header-section__description-text').text.strip().replace(',', '')
             item_name2 = soup.find(
                 'span', class_='pip-header-section__title--big notranslate').text.strip()
-            name_thai = item_name1 + ' ' + item_name2
-            name_en_lst = name_thai.split(' ')
-            for s in name_en_lst:
-                if s != s.upper():
-                    name_eng += s + ' '
-                else:
-                    s_th_en = translator_th.translate(s)
-                    name_eng += s_th_en + ' '
+            item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
+            
+            name_thai = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
         except Exception as _ex:
             item_name1 = None
-
+        
         try:
             item_artcl = soup.find(
                 'span', class_='pip-product-identifier__value').text.strip()
@@ -352,6 +347,7 @@ def get_data():
 
         img_lst = []
         product_images = [''] * 8
+        url_img_desc = ''
         try:
             item_imgs = soup.find('div', class_='pip-product__left-top').find_all(
                 'div', class_='js-range-media-grid pip-media-grid')
@@ -362,10 +358,85 @@ def get_data():
                     img_lst.append(urls)
             for i in range(len(img_lst)):
                 product_images[i] = img_lst[i]
+                
+            # Создание строки фоток под описание
+            for url_img in img_lst:
+                url_img_desc += f'\n{url_img}' 
         except Exception as _ex:
             item_imgs = None
 
-        long_desc = item_description + f'\n{item_material}\n{item_instruction}'
+        long_desc = item_description + f'\n{item_material}\n{item_instruction}{url_img_desc}'
+
+
+
+        #! Блок работы с англ версией
+        url = url[:24] + 'en' + url[26:]
+        
+        response = requests.get(
+            url=url, headers=headers)
+        soup = bs(response.text, 'lxml')
+        
+
+        try:
+            item_name1 = soup.find(
+                'span', class_='pip-header-section__description-text').text.strip().replace(',', '')
+            item_name2 = soup.find(
+                'span', class_='pip-header-section__title--big notranslate').text.strip()
+            item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
+            name_eng = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
+        except Exception as _ex:
+            item_name1 = None
+        
+        # блок с описанием 
+        
+        try:
+            item_material = soup.find(
+                'dl', class_='pip-product-details__section').text.strip()
+        except Exception as _ex:
+            item_material = ''
+        
+        
+        try:
+            item_instruction = soup.find(
+                'a', class_='pip-product-details__document-link').get('href')
+        except Exception as _ex:
+            item_instruction = ''
+
+
+        desc_lst = []
+        try:
+            item_descriptions = soup.find(
+                'div', class_='pip-product-details__container')
+            p1 = item_descriptions.find_all(
+                'p', class_='pip-product-details__paragraph')
+            for p in p1:
+                p = p.text.strip()
+                desc_lst.append(p)
+            span = item_descriptions.find(
+                'span', class_='pip-product-details__header').text.strip()
+            p2 = item_descriptions.find(
+                'p', class_='pip-product-details__label').text.strip()
+            desc_lst.append(span)
+            desc_lst.append(p2)
+            item_description = '\n'.join(desc_lst)
+        except Exception as _ex:
+            try:
+                item_descriptions = soup.find(
+                    'div', class_='pip-product-details__container')
+                span = item_descriptions.find(
+                    'span', class_='pip-product-details__header').text.strip()
+                p2 = item_descriptions.find(
+                    'p', class_='pip-product-details__label').text.strip()
+                desc_lst.append(span)
+                desc_lst.append(p2)
+                item_description = '\n'.join(desc_lst)
+                item_description = item_description + '\nน้ำหนักขนส่ง'
+            except Exception as _ex:
+                item_description = ''
+
+        
+        long_desc_en = item_description + f'\n{item_material}\n{item_instruction}{url_img_desc}'
+        
 
         result_list.append(
             {
@@ -383,6 +454,7 @@ def get_data():
                 'Product Images8': product_images[7],
                 'Brand': 'IKEA',
                 'Long Description': long_desc,
+                'English Long Description (optional)': long_desc_en,
                 'Dangerous Goods': '',
                 'Variation Name1': '',
                 'Option for Variation1': '',
