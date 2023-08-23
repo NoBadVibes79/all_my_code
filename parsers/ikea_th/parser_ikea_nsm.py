@@ -201,7 +201,7 @@ def get_data():
     urls_cnt = len(urls_list)
     cnt = 1
     
-    for url in urls_list[:20]:
+    for url in urls_list:
         
         response = requests.get(
             url=url, headers=headers)
