@@ -207,15 +207,17 @@ def get_data():
             url=url, headers=headers)
         soup = bs(response.text, 'lxml')
 
-
         try:
             item_name1 = soup.find(
                 'span', class_='pip-header-section__description-text').text.strip().replace(',', '')
             item_name2 = soup.find(
                 'span', class_='pip-header-section__title--big notranslate').text.strip()
-            item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
+            try:
+                item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
             
-            name_thai = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
+                name_thai = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
+            except Exception as _ex:
+                name_thai = item_name1 + ' IKEA ' + item_name2
         except Exception as _ex:
             item_name1 = None
         
@@ -245,51 +247,6 @@ def get_data():
         except Exception as _ex:
             item_category = None
 
-        try:
-            item_material = soup.find(
-                'dl', class_='pip-product-details__section').text.strip()
-        except Exception as _ex:
-            item_material = ''
-
-        try:
-            item_instruction = soup.find(
-                'a', class_='pip-product-details__document-link').get('href')
-        except Exception as _ex:
-            item_instruction = ''
-
-        desc_lst = []
-        try:
-            item_descriptions = soup.find(
-                'div', class_='pip-product-details__container')
-            p1 = item_descriptions.find_all(
-                'p', class_='pip-product-details__paragraph')
-            for p in p1:
-                p = p.text.strip()
-                desc_lst.append(p)
-            span = item_descriptions.find(
-                'span', class_='pip-product-details__header').text.strip()
-            p2 = item_descriptions.find(
-                'p', class_='pip-product-details__label').text.strip()
-            desc_lst.append(span)
-            desc_lst.append(p2)
-            item_description = '\n'.join(desc_lst)
-        except Exception as _ex:
-            try:
-                item_descriptions = soup.find(
-                    'div', class_='pip-product-details__container')
-                span = item_descriptions.find(
-                    'span', class_='pip-product-details__header').text.strip()
-                p2 = item_descriptions.find(
-                    'p', class_='pip-product-details__label').text.strip()
-                desc_lst.append(span)
-                desc_lst.append(p2)
-                item_description = '\n'.join(desc_lst)
-                item_description = item_description + '\nน้ำหนักขนส่ง'
-            except Exception as _ex:
-                item_description = ''
-
-        size_lst = []
-        no_size_lst = []
         size_dict = {}
 
         try:
@@ -361,12 +318,27 @@ def get_data():
                 
             # Создание строки фоток под описание
             for url_img in img_lst:
-                url_img_desc += f'\n{url_img}' 
+                url_img_desc += f'\n<img src="{url_img}"/>' 
         except Exception as _ex:
             item_imgs = None
 
-        long_desc = item_description + f'\n{item_material}\n{item_instruction}{url_img_desc}'
 
+        try:
+            item_description = soup.find('p', class_='pip-product-summary__description').text.strip()
+        except Exception as _ex:
+            item_description = None
+
+        try:
+            product_details = soup.find(
+                'div', class_='pip-product-details__container')
+            product_details_txt = product_details.find_all('p')
+            del product_details_txt[-1]
+            product_details_lst = [p.text.strip() for p in product_details_txt]
+            details = '\n'.join(product_details_lst)
+        except Exception as _ex:
+            details = None
+
+        long_desc = item_description + f'\n{details}{url_img_desc}' 
 
 
         #! Блок работы с англ версией
@@ -376,66 +348,38 @@ def get_data():
             url=url, headers=headers)
         soup = bs(response.text, 'lxml')
         
-
         try:
             item_name1 = soup.find(
                 'span', class_='pip-header-section__description-text').text.strip().replace(',', '')
             item_name2 = soup.find(
                 'span', class_='pip-header-section__title--big notranslate').text.strip()
-            item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
-            name_eng = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
+            
+            try:
+                item_name3 = soup.find('button', class_='pip-link-button pip-header-section__description-measurement').text.strip()
+                
+                name_eng = item_name1 + ' IKEA ' + item_name2 + ' ' + item_name3
+            except Exception as _ex:
+                name_eng = item_name1 + ' IKEA ' + item_name2
         except Exception as _ex:
             item_name1 = None
         
         # блок с описанием 
-        
         try:
-            item_material = soup.find(
-                'dl', class_='pip-product-details__section').text.strip()
+            item_description = soup.find('p', class_='pip-product-summary__description').text.strip()
         except Exception as _ex:
-            item_material = ''
-        
-        
-        try:
-            item_instruction = soup.find(
-                'a', class_='pip-product-details__document-link').get('href')
-        except Exception as _ex:
-            item_instruction = ''
+            item_description = None
 
-
-        desc_lst = []
         try:
-            item_descriptions = soup.find(
+            product_details = soup.find(
                 'div', class_='pip-product-details__container')
-            p1 = item_descriptions.find_all(
-                'p', class_='pip-product-details__paragraph')
-            for p in p1:
-                p = p.text.strip()
-                desc_lst.append(p)
-            span = item_descriptions.find(
-                'span', class_='pip-product-details__header').text.strip()
-            p2 = item_descriptions.find(
-                'p', class_='pip-product-details__label').text.strip()
-            desc_lst.append(span)
-            desc_lst.append(p2)
-            item_description = '\n'.join(desc_lst)
+            product_details_txt = product_details.find_all('p')
+            del product_details_txt[-1]
+            product_details_lst = [p.text.strip() for p in product_details_txt]
+            details = '\n'.join(product_details_lst)
         except Exception as _ex:
-            try:
-                item_descriptions = soup.find(
-                    'div', class_='pip-product-details__container')
-                span = item_descriptions.find(
-                    'span', class_='pip-product-details__header').text.strip()
-                p2 = item_descriptions.find(
-                    'p', class_='pip-product-details__label').text.strip()
-                desc_lst.append(span)
-                desc_lst.append(p2)
-                item_description = '\n'.join(desc_lst)
-                item_description = item_description + '\nน้ำหนักขนส่ง'
-            except Exception as _ex:
-                item_description = ''
-
+            details = None
         
-        long_desc_en = item_description + f'\n{item_material}\n{item_instruction}{url_img_desc}'
+        long_desc_en = item_description + f'\n{details}{url_img_desc}'
         
 
         result_list.append(
