@@ -326,7 +326,7 @@ def get_data():
         try:
             item_description = soup.find('p', class_='pip-product-summary__description').text.strip()
         except Exception as _ex:
-            item_description = None
+            item_description = ''
 
         try:
             product_details = soup.find(
@@ -336,7 +336,8 @@ def get_data():
             product_details_lst = [p.text.strip() for p in product_details_txt]
             details = '\n'.join(product_details_lst)
         except Exception as _ex:
-            details = None
+            details = ''
+
 
         long_desc = item_description + f'\n{details}{url_img_desc}' 
 
@@ -367,7 +368,7 @@ def get_data():
         try:
             item_description = soup.find('p', class_='pip-product-summary__description').text.strip()
         except Exception as _ex:
-            item_description = None
+            item_description = ''
 
         try:
             product_details = soup.find(
@@ -377,7 +378,7 @@ def get_data():
             product_details_lst = [p.text.strip() for p in product_details_txt]
             details = '\n'.join(product_details_lst)
         except Exception as _ex:
-            details = None
+            details = ''
         
         long_desc_en = item_description + f'\n{details}{url_img_desc}'
         
